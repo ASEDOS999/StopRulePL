@@ -1,3 +1,7 @@
+import time
+import numpy as np
+
+
 def gradf_inexact(w, gradf, Delta=0, dtype=1, v=None):
     n = len(w)
     g = gradf(w)
@@ -50,6 +54,7 @@ class GradientDescent:
             k += 1
         return x
 
+
 def parse_logs(xhistory, ret_time=False, funcx=None):
     values = [funcx(x) for x, _ in xhistory]
     if ret_time:
@@ -63,6 +68,7 @@ def parse_logs(xhistory, ret_time=False, funcx=None):
 class StepSize:
     def __call__(self, x, h, k, *args, **kwargs):
         pass
+
 
 class ConstantStepSize(StepSize):
     def __init__(self, alpha):
