@@ -1,5 +1,6 @@
 import time
 import numpy as np
+from numpy.linalg import norm
 
 
 def gradf_inexact(w, gradf, Delta=0, dtype=1, v=None):
@@ -76,3 +77,18 @@ class ConstantStepSize(StepSize):
     
     def __call__(self, x, h, k, *args, **kwargs):
         return self.alpha
+
+
+class AdaptiveL(StepSize):
+    def __init__(self, L0, Delta):
+        self.L = L0
+        self.Delta = Delta
+    
+    def __call__(self, x, h, k, *args, **kwargs):
+        L, Delta = self.L, self.Delta
+        xnew = x + 1/(2*L) * h
+        while f(xnew) > f(x) + h.dot(xnew-x) + L/2*norm(xnew-x)**2 + Delta * norm(xnew-x):
+            L *= 2
+            xnew = x + 1/(2*L) * h
+        self.L = L/2
+        return 1/(2*L)
