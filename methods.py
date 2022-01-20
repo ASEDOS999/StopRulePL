@@ -118,7 +118,7 @@ class AdaptiveNoiseGD:
 
 
 class AdaptiveLdelta(StepSize):
-    def __init__(self, L0=1, Delta0=1e-4, mindelta=1e-4, Lmin=0, fstar=0, mu=1):
+    def __init__(self, L0=1, Delta0=1e-4, mindelta=1e-4, Lmin=0, fstar=0, mu=1, delta_alpha=2):
         self.L = L0
         self.Lmin = Lmin
         self.Delta = Delta0
@@ -126,6 +126,7 @@ class AdaptiveLdelta(StepSize):
         self.mindelta = mindelta
         self.fstar = fstar
         self.mu = mu
+        self.delta_alpha = delta_alpha
 
     def __call__(self, x, h, k, gradf, f, *args, **kwargs):
         L = self.L
@@ -138,16 +139,13 @@ class AdaptiveLdelta(StepSize):
             Delta1 = 0
         Delta1 = np.sqrt(Delta1)
         Delta = max(self.Delta, np.sqrt(Delta1))
-        #print(self.Delta)
 
         while f(xnew) > fx - normh ** 2 / (2 * L) + 1 / (8 * L) * normh ** 2 + Delta * normh / (2 * L):
             L *= 2
-            Delta *= 2
-            #print("\tWhile", Delta, L)
+            Delta *= self.delta_alpha
             xnew = x + 1 / (2 * L) * h
 
         Delta2 = (f(xnew) - fx + normh ** 2 / (2 * L) - 1 / (8 * L) * normh ** 2) / (normh / (2 * L))
-        #print(Delta2, Delta1, self.maxdelta, normh, L)
         Delta = max(Delta1, Delta2, self.maxdelta, self.mindelta)
         self.maxdelta = max(self.maxdelta, Delta)
         self.Delta = Delta
