@@ -69,10 +69,11 @@ class ConstantStepSize(StepSize):
 
 
 class AdaptiveL(StepSize):
-    def __init__(self, L0=1, Delta=0, Lmin=0):
+    def __init__(self, L0=1, Delta=0, delta=0, Lmin=0):
         self.L = L0
         self.Lmin = Lmin
         self.Delta = Delta
+        self.delta = delta
 
     def __call__(self, x, h, k, gradf, f, *args, **kwargs):
         L, Delta = self.L, self.Delta
@@ -80,7 +81,7 @@ class AdaptiveL(StepSize):
         xnew = x + 1 / (2 * L) * h
         normh = norm(h)
         fx = f(x)
-        while f(xnew) > fx - normh ** 2 / (2 * L) + 1 / (8 * L) * normh ** 2 + Delta * normh / (2 * L):
+        while f(xnew) > fx - normh ** 2 / (2 * L) + 1 / (8 * L) * normh ** 2 + Delta * normh / (2 * L) + self.delta:
             L *= 2
             xnew = x + 1 / (2 * L) * h
         self.L = L
