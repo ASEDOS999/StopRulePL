@@ -81,7 +81,7 @@ class AdaptiveL(StepSize):
         xnew = x + 1 / (2 * L) * h
         normh = norm(h)
         fx = f(x)
-        while f(xnew) > fx - normh ** 2 / (2 * L) + 1 / (8 * L) * normh ** 2 + Delta * normh / (2 * L) + self.delta:
+        while f(xnew) > fx - normh ** 2 / (4 * L) + Delta**2 / (2 * L) + 2*self.delta:
             L *= 2
             xnew = x + 1 / (2 * L) * h
         self.L = L
