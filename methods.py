@@ -115,6 +115,7 @@ class AdaptiveNoiseGD:
             if k >= max_iter:
                 break
             k += 1
+        #print(np.linalg.norm(gradf(x)), self.alpha * self.StepSizeChoice.maxdelta)
         return x
 
 
@@ -139,7 +140,7 @@ class AdaptiveLdelta(StepSize):
         if Delta1 < 0:
             Delta1 = 0
         Delta1 = np.sqrt(Delta1)
-        Delta = max(self.Delta, np.sqrt(Delta1))
+        Delta = max(self.Delta, (Delta1))
 
         while f(xnew) > fx - normh ** 2 / (2 * L) + 1 / (8 * L) * normh ** 2 + Delta * normh / (2 * L):
             L *= 2
@@ -147,6 +148,7 @@ class AdaptiveLdelta(StepSize):
             xnew = x + 1 / (2 * L) * h
 
         Delta2 = (f(xnew) - fx + normh ** 2 / (2 * L) - 1 / (8 * L) * normh ** 2) / (normh / (2 * L))
+        #print("Delta", Delta2, Delta1, self.maxdelta)
         Delta = max(Delta1, Delta2, self.maxdelta, self.mindelta)
         self.maxdelta = max(self.maxdelta, Delta)
         self.Delta = Delta
@@ -161,5 +163,6 @@ class AdaptiveLdelta(StepSize):
                 2 * L):
             L *= 2
         self.L = L
+        #print("Out", self.L, self.maxdelta)
         return 1 / (2 * L)
 
